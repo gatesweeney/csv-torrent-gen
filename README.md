@@ -8,15 +8,18 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 This project uses the [Ryuk-me Torrent-Api-py](https://github.com/Ryuk-me/Torrent-Api-py).
 An instance of this needs to be running for the code to work. 
 
-`# Clone the repo`
-`$ git clone https://github.com/Ryuk-me/Torrent-Api-py`
+```sh
 
-`# Install Depedencies`
-`$ pip install -r requirements.txt`
+# Clone the repo
+$ git clone https://github.com/Ryuk-me/Torrent-Api-py
 
-`# Start`
-`$ python main.py`
+# Install Depedencies
+$ pip install -r requirements.txt
 
+# Start
+$ python main.py
+
+```
 
 API calls default to localhost:8080 for the domain. This can be changed in the src/App.js file near the top.
 
