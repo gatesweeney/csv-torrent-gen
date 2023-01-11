@@ -3,6 +3,7 @@ import { useState } from "react";
 import Papa from "papaparse";
 import getTorrents from "./getTorrent";
 import copyText from "./copyText";
+import $ from "jquery";
 
 let domain = 'localhost';
 let port = '8080';
@@ -12,7 +13,7 @@ const limit = '3';
 var magnetArray = [];
 
 function App() {
-  
+  $('#complete').hide();
   // State to store parsed data
   const [parsedData, setParsedData] = useState([]);
 
@@ -88,8 +89,7 @@ function App() {
         <div id="percent"><span>0</span>%</div>
       </div>
       <br />
-      <button id="copy" onClick={copyText(magnetArray)}>Copy Magnets</button>
-
+      <div id="complete"></div>
       <br />
       <br />
       <br />

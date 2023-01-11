@@ -1,6 +1,7 @@
 # CSV to Magnet Links
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app). Install node.js to run this project
+## TODO
+ - Fix async issue with getTorrent() so the magnets array can return properly to be copied.
 
 
 ## Dependencies

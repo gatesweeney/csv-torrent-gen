@@ -90,9 +90,19 @@ export default async function getTorrents(csvData, domain, port, site, limit, se
     } 
     // returns array of magnet links
     //console.log(apiURLS);
+    console.log('Magnets:')
     console.log(magnets);
     console.log('Errors:')
     console.log(errors);
-    return new Promise(magnets);
+
+    var magString = magnets.join('\n');
+    console.log(`************Mag String***************\n${magString}`)
+    navigator.clipboard.writeText(magString);
+    $('#results').hide();
+    $('#complete').show();
+    $('#complete').text(`Query Completed. ${magnets.length} magnets copied to your clipboard. ${errors.length} movie(s) could not be found.`)
+
+
+    return magString;
 
 }
