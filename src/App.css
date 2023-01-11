@@ -36,3 +36,16 @@
     transform: rotate(360deg);
   }
 }
+
+
+#myProgress {
+  width: 100%;
+  background-color: grey;
+  max-width: 600px;
+}
+
+#myBar {
+  width: 0%;
+  height: 30px;
+  background-color: green;
+}

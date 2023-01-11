@@ -1,0 +1,74 @@
+<script src="https://code.jquery.com/jquery-3.6.3.js" integrity="sha256-nQLuAZGRRcILA+6dMBOvcRh5Pe310sBpanc6+QBmyVM=" crossorigin="anonymous"></script>
+
+<script>
+
+let magnets = [];
+
+function getTorrents() {
+
+
+    var csvData = ["avengers age of ultron", "no country for old men", "dunkirk"]
+
+    // prefix is domain and port only
+    const prefix = 'localhost:8080';
+    // which torrent site to search
+    // how many results to check
+    const limit = '5';
+    // http://localhost:8080/api/v1/all/search?query=avengers&limit=10
+    
+
+    // loop through csv array
+    for (let i = 0; i < csvData.length; i++) {
+        // set the search terms
+        var query = csvData[i].replaceAll(' ', '%20');
+        // URL structure
+        var url = `http://${prefix}/api/v1/all/search?query=${query}&limit=${limit}`
+        console.log(url);
+        // API Call
+        $.getJSON(url, function (req) {
+
+            var big = 0;
+            var largestID;
+            //console.log(req.data.length);
+
+            for (let i = 0; i < req.data.length; i++) {
+                var size = req.data[i].size;
+                size = sizeProc(size);
+                //console.log(size);
+                if (size >= big) {
+                    big = size;
+                    largestID = i;
+                }
+                
+            }
+            //console.log('ID HERE ' + largestID);
+            var magnet = req.data[largestID].magnet;
+            
+            magnets.push(magnet);
+
+
+        }
+    );
+    } 
+    // returns array of magnet links
+    console.log(magnets);
+    return magnets;
+
+}
+
+function sizeProc(sizeRaw) {
+    var sizeSplit = sizeRaw.split(' ');
+    var sizeNum = parseFloat(sizeSplit[0])
+    var sizeOut;
+    if (sizeSplit[1] == 'GB') {
+        sizeOut = sizeNum * 1024;
+    } else if (sizeSplit[1] == 'KB') {
+        sizeOut = sizeNum / 1024;
+    } else {
+        sizeOut = sizeNum;
+    }
+
+    return sizeOut;
+}
+
+</script>
