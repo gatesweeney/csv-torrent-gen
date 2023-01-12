@@ -89,7 +89,7 @@ export default async function getTorrents(csvData, domain, port, site, limit, se
                 magnet = '#';
                 fColor= 'red';
                 linkTitle = 'Error';
-              }
+            }
             
             let ele = `<td><a class="mLink" style="color: ${fColor};" href="${magnet}">${linkTitle}</a></td>`;
             $('.tRow').eq(i).append(ele);
