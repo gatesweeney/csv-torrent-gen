@@ -5,14 +5,16 @@ import getTorrents from "./getTorrent";
 import copyText from "./copyText";
 import $ from "jquery";
 
+
 let domain = 'localhost';
 let port = '8080';
-let site = 'magnetdl';
+let site = 'piratebay';
 // Set to true to search all sites. Overrides 'site'
-let searchAll = true;
+let searchAll = false;
 // Limits torrent listings
-const limit = '2';
+const limit = '3';
 var magnetArray = [];
+
 
 function App() {
   $('#complete').hide();

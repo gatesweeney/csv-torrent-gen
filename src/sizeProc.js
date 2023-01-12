@@ -9,6 +9,10 @@ export default function sizeProc(sizeRaw) {
         sizeOut = sizeNum * 1024;
     } else if (sizeSplit[1] == 'KB') {
         sizeOut = sizeNum / 1024;
+    } else if (sizeSplit[1] == 'MiB') {
+        sizeOut = sizeNum / 1024;
+    } else if (sizeSplit[1] == 'GiB') {
+        sizeOut = sizeNum * 1024;
     } else {
         sizeOut = sizeNum;
     }
