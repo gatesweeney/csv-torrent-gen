@@ -8,8 +8,10 @@ import $ from "jquery";
 let domain = 'localhost';
 let port = '8080';
 let site = 'magnetdl';
+// Set to true to search all sites. Overrides 'site'
 let searchAll = true;
-const limit = '3';
+// Limits torrent listings
+const limit = '2';
 var magnetArray = [];
 
 function App() {
@@ -68,6 +70,7 @@ function App() {
 
   return (
     <div>
+      <h1>csv-to-movie</h1>
       {/* File Uploader */}
       <input
         type="file"
@@ -106,7 +109,7 @@ function App() {
         <tbody>
           {values.map((value, index) => {
             return (
-              <tr key={index}>
+              <tr class="tRow" key={index}>
                 {value.map((val, i) => {
                   return <td key={i}>{val}</td>;
                 })}
