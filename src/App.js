@@ -77,7 +77,6 @@ function App() {
         name="file"
         onChange={changeHandler}
         accept=".csv"
-        style={{ display: "block", margin: "10px auto" }}
       />
       <br />
       <br />

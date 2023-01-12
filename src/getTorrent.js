@@ -55,7 +55,7 @@ export default async function getTorrents(csvData, domain, port, site, limit, se
         });
     // API Call
     await $.getJSON(url, function (req) {
-            <title>CSV-to-Movie</title>
+            
             var big = 0;
             var largestID;
 
@@ -73,18 +73,29 @@ export default async function getTorrents(csvData, domain, port, site, limit, se
                 
             }
 
+            let fColor = 'green';
+            let linkTitle = 'Magnet';
+
             try {
                 var magnet = req.data[largestID].magnet;
                 magnets.push(magnet);
                 console.log(magnet);
-                let ele = `<td><a href="${magnet}">Magnet</a></td>`;
-                $('.tRow').eq(i).append(ele);
+
+
               }
               catch(err) {
                 console.log(`******** Couldn't find movie ${csvData[i]}`)
                 errors.push(csvData[i]);
+                magnet = '#';
+                fColor= 'red';
+                linkTitle = 'Error';
               }
             
+            let ele = `<td><a class="mLink" style="color: ${fColor};" href="${magnet}">${linkTitle}</a></td>`;
+            $('.tRow').eq(i).append(ele);
+        
+            $('.mLink')[i].click();
+
 
 
         }
@@ -103,6 +114,7 @@ export default async function getTorrents(csvData, domain, port, site, limit, se
     $('#results').hide();
     $('#complete').show();
     $('#complete').text(`Query Completed. ${magnets.length} magnets copied to your clipboard. ${errors.length} movie(s) could not be found.`)
+
 
 
     return magString;
