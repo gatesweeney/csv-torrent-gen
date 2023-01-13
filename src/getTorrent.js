@@ -111,7 +111,7 @@ export default async function getTorrents(csvData, domain, port, site, limit, se
             }
             
             let ele = `<td><a class="mLink" style="color: ${fColor};" href="${magnet}">${linkTitle}</a></td>`;
-            let sizeRow = `<td>${size}</td>`;
+            let sizeRow = `<td>${size} MBs</td>`;
 
             $('.tRow').eq(i).append(ele);
             $('.tRow').eq(i).append(sizeRow);
