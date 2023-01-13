@@ -10,9 +10,9 @@ let domain = 'localhost';
 let port = '8080';
 let site = 'piratebay';
 // Set to true to search all sites. Overrides 'site'
-let searchAll = true;
+let searchAll = false;
 // Limits torrent listings
-const limit = '3';
+const limit = '20';
 var magnetArray = [];
 
 
@@ -44,7 +44,6 @@ function App() {
 
         // Parsed Data Response in array format
         setParsedData(results.data);
-        console.log(results.data);
 
         // Create array and push movie names to it
         let movieList = [];

@@ -1,6 +1,6 @@
 import { Man } from "@mui/icons-material";
 import $ from "jquery";
-import sizeProc from "./sizeProc";
+//import sizeProc from "./sizeProc";
 
 
 let magnets = [];
@@ -66,10 +66,25 @@ export default async function getTorrents(csvData, domain, port, site, limit, se
             for (let m = 0; m < req.data.length; m++) {
                 // get size of item
                 var size = req.data[m].size;
-                // call function to convert size to MB
-                size = sizeProc(size)
+                //Split String ex. '2.35 GB'
+                var sizeSplit = size.split(' ');
+                // set unit to var
+                console.log(sizeSplit[1])
+                var sizeUnit = String(sizeSplit[1]);
+                sizeUnit = sizeUnit.toLowerCase();
+                //Convert to float
+                var sizeNum = parseFloat(sizeSplit[0])
+                var sizeOut;
+                // Check for unit and convert to MB
+                if (sizeUnit === 'gb' || 'gib') {
+                    sizeOut = sizeNum * 1024;
+                } else if (sizeUnit === 'kb' || 'kib') {
+                    sizeOut = sizeNum / 1024;
+                } else {
+                    sizeOut = sizeNum;
+                }
                 //console.log(size);
-                if (size >= big) {
+                if (sizeOut >= big) {
                     big = size;
                     largestID = m;
                 }
