@@ -1,5 +1,7 @@
 # CSV to Magnet Links
 
+ - Works best with [Transmission](https://transmissionbt.com/download) torrent client.
+
 ## TODO
  - Fix async issue with getTorrent() so the magnets array can return properly to be copied.
 
