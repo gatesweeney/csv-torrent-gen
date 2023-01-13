@@ -10,7 +10,7 @@ let domain = 'localhost';
 let port = '8080';
 let site = 'piratebay';
 // Set to true to search all sites. Overrides 'site'
-let searchAll = false;
+let searchAll = true;
 // Limits torrent listings
 const limit = '3';
 var magnetArray = [];
@@ -58,8 +58,6 @@ function App() {
 
         //Call the API
         magnetArray = getTorrents(movieList, domain, port, site, limit, searchAll);
-        console.log(`Magnets ${magnetArray}`);
-        console.log('Finished with the call')
 
         // Filtered Column Names
         setTableRows(rowsArray[0]);

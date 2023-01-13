@@ -11,15 +11,19 @@ let apiURLS = [];
 export default async function getTorrents(csvData, domain, port, site, limit, searchAll) {
     
     //set default api type
-    var apiType = '/api/v1/search?site='
+    var apiType;
     
     // ALL URL /api/v1/all/search?query=avengers&limit=10
     // SITE URL /api/v1/search?site=1337x&query=avengers&limit=20
 
-    if (searchAll == true) {
+    if (searchAll === true) {
         apiType = '/api/v1/all/search?';
         site = '';
+    } else {
+        apiType = '/api/v1/search?site=';
     }
+
+    console.log(apiType);
     
 
     // Sets total movies
@@ -79,7 +83,7 @@ export default async function getTorrents(csvData, domain, port, site, limit, se
             try {
                 var magnet = req.data[largestID].magnet;
                 magnets.push(magnet);
-                console.log(magnet);
+                console.log(magnet.substring(0,20));
 
 
               }
@@ -92,8 +96,11 @@ export default async function getTorrents(csvData, domain, port, site, limit, se
             }
             
             let ele = `<td><a class="mLink" style="color: ${fColor};" href="${magnet}">${linkTitle}</a></td>`;
+            let sizeRow = `<td>${size}</td>`;
+
             $('.tRow').eq(i).append(ele);
-        
+            $('.tRow').eq(i).append(sizeRow);
+
             $('.mLink')[i].click();
 
 
