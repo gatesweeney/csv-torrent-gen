@@ -44,7 +44,7 @@ export default async function getTorrents(csvData, domain, port, site, limit, se
 
 
         // Log movie currently being queried
-        console.log(csvData[i]);
+        console.log(`-------------      NEW MOVIE       --------\n${csvData[i]}`);
         // Remove special characters and URLify the query with %20
         query = query.replace(/[^a-zA-Z0-9 ]/g, '');
         query = query.replaceAll(' ', '%20');
@@ -61,36 +61,48 @@ export default async function getTorrents(csvData, domain, port, site, limit, se
     await $.getJSON(url, function (req) {
             
             var big = 0;
-            var largestID;
+            var largestID = null;
+            var sizes = [];
 
             for (let m = 0; m < req.data.length; m++) {
                 // get size of item
-                var size = req.data[m].size;
-                //Split String ex. '2.35 GB'
-                var sizeSplit = size.split(' ');
+                var size = String(req.data[m].size);
+
                 // set unit to var
-                console.log(sizeSplit[1])
-                var sizeUnit = String(sizeSplit[1]);
-                sizeUnit = sizeUnit.toLowerCase();
+                var sizeUnit = size.match(/[a-zA-Z]+/);
+                
                 //Convert to float
-                var sizeNum = parseFloat(sizeSplit[0])
+                var sizeNum = parseFloat(size.match(/[0-9]*\.[0-9]+/))
+                
+
+                var converted;
                 var sizeOut;
+
                 // Check for unit and convert to MB
-                if (sizeUnit === 'gb' || 'gib') {
+                if (sizeUnit == 'GiB') {
                     sizeOut = sizeNum * 1024;
-                } else if (sizeUnit === 'kb' || 'kib') {
+                    converted = 'GB';
+                } else if (sizeUnit == 'KiB') {
                     sizeOut = sizeNum / 1024;
-                } else {
+                    converted = 'KB';
+                } else if (sizeUnit == 'MiB') {
                     sizeOut = sizeNum;
+                    converted = 'MB';
+                } else {
+                    sizeOut = 'DNP';
                 }
-                //console.log(size);
                 if (sizeOut >= big) {
-                    big = size;
+                    big = sizeOut;
                     largestID = m;
                 }
+
+                sizes.push(`Size: ${sizeNum}  Unit: ${sizeUnit}  Size converted: ${sizeOut}`)
                 
                 
             }
+
+            console.log(sizes);
+            console.log(`********** Largest ID: ${largestID}`);
 
             let fColor = 'green';
             let linkTitle = 'Magnet';
@@ -103,7 +115,7 @@ export default async function getTorrents(csvData, domain, port, site, limit, se
 
               }
               catch(err) {
-                console.log(`******** Couldn't find movie ${csvData[i]}`)
+                console.log(`******** Couldn't find movie: ${csvData[i]}`)
                 errors.push(csvData[i]);
                 magnet = '#';
                 fColor= 'red';
@@ -111,7 +123,7 @@ export default async function getTorrents(csvData, domain, port, site, limit, se
             }
             
             let ele = `<td><a class="mLink" style="color: ${fColor};" href="${magnet}">${linkTitle}</a></td>`;
-            let sizeRow = `<td>${size} MBs</td>`;
+            let sizeRow = `<td>${sizes[largestID]}</td>`;
 
             $('.tRow').eq(i).append(ele);
             $('.tRow').eq(i).append(sizeRow);

@@ -12,7 +12,7 @@ let site = 'piratebay';
 // Set to true to search all sites. Overrides 'site'
 let searchAll = false;
 // Limits torrent listings
-const limit = '20';
+const limit = '10';
 var magnetArray = [];
 
 
