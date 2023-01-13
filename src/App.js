@@ -13,6 +13,8 @@ let site = 'piratebay';
 let searchAll = false;
 // Limits torrent listings
 const limit = '10';
+// Sets a minimum for seeders
+const seedMin = '15';
 var magnetArray = [];
 
 
@@ -56,7 +58,7 @@ function App() {
         console.log(movieList);
 
         //Call the API
-        magnetArray = getTorrents(movieList, domain, port, site, limit, searchAll);
+        magnetArray = getTorrents(movieList, domain, port, site, limit, seedMin, searchAll);
 
         // Filtered Column Names
         setTableRows(rowsArray[0]);

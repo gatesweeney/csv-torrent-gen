@@ -8,7 +8,7 @@ let errors = [];
 let apiURLS = [];
 
 
-export default async function getTorrents(csvData, domain, port, site, limit, searchAll) {
+export default async function getTorrents(csvData, domain, port, site, limit, seedMin, searchAll) {
     
     //set default api type
     var apiType;
@@ -58,57 +58,95 @@ export default async function getTorrents(csvData, domain, port, site, limit, se
             "error":function() { console.log('Error with the request has ocurred.')  }
         });
     // API Call
-    await $.getJSON(url, function (req) {
+    await $.getJSON(url, async function (req) {
+
+            let fColor = 'green';
+            let linkTitle = 'Magnet';
+            var magnet = '#';
+            var fallbackMessage;
             
             var big = 0;
             var largestID = null;
             var sizes = [];
+            var options = 0;
 
-            for (let m = 0; m < req.data.length; m++) {
-                // get size of item
-                var size = String(req.data[m].size);
+            async function picker(req, seedReq) {
+                var noSeed = 0;
+                for (let m = 0; m < req.data.length; m++) {
+                    // get size of item
+                    var size = String(req.data[m].size);
+                    var seeders = parseInt(req.data[m].seeders);
+    
+                    // set unit to var
+                    var sizeUnit = size.match(/[a-zA-Z]+/);
+                    
+                    //Convert to float
+                    var sizeNum = parseFloat(size.match(/[0-9]*\.[0-9]+/))
+                    
+    
+                    var converted;
+                    var sizeOut;
+                    
+    
+                    // Check for unit and convert to MB
+                    if (seeders >= seedReq) {
+                        options ++;
 
-                // set unit to var
-                var sizeUnit = size.match(/[a-zA-Z]+/);
-                
-                //Convert to float
-                var sizeNum = parseFloat(size.match(/[0-9]*\.[0-9]+/))
-                
-
-                var converted;
-                var sizeOut;
-
-                // Check for unit and convert to MB
-                if (sizeUnit == 'GiB') {
-                    sizeOut = sizeNum * 1024;
-                    converted = 'GB';
-                } else if (sizeUnit == 'KiB') {
-                    sizeOut = sizeNum / 1024;
-                    converted = 'KB';
-                } else if (sizeUnit == 'MiB') {
-                    sizeOut = sizeNum;
-                    converted = 'MB';
-                } else {
-                    sizeOut = 'DNP';
+                        if (sizeUnit == 'GiB') {
+                            sizeOut = sizeNum * 1024;
+                            converted = 'GB';
+                        } else if (sizeUnit == 'KiB') {
+                            sizeOut = sizeNum / 1024;
+                            converted = 'KB';
+                        } else if (sizeUnit == 'MiB') {
+                            sizeOut = sizeNum;
+                            converted = 'MB';
+                        } else {
+                            sizeOut = 'DNP';
+                        }
+                        if (sizeOut >= big) {
+                            big = sizeOut;
+                            largestID = m;
+                        }
+                    } else {
+                        sizeOut = 'Too Few Seeders';
+                        noSeed ++;
+                    }
+    
+                    sizes.push(`Size: ${sizeNum} ${sizeUnit} - ${sizeOut} MBs Seeders: ${seeders}`)
+                    
+                    
                 }
-                if (sizeOut >= big) {
-                    big = sizeOut;
-                    largestID = m;
+                if (noSeed == req.data.length) { var tooFew = true; }
+                if (tooFew === true) {
+                    fColor= 'red';
+                    linkTitle = 'Low Seeders - OK';
+                    try {
+                        await picker(req, 5);
+                    } catch (error) {
+                        fColor= 'red';
+                        linkTitle = 'Error - Not Found';
+                        magnet = '#';
+                        fallbackMessage = "Couldn't find a suitable listing for this query...";
+                    }
                 }
+                return options;
 
-                sizes.push(`Size: ${sizeNum}  Unit: ${sizeUnit}  Size converted: ${sizeOut}`)
-                
-                
             }
+
+            
+
+            // Pick the torrent, if there's no listings with seedMin seeders, check again with just 5.
+            await picker(req, seedMin);
+            
 
             console.log(sizes);
             console.log(`********** Largest ID: ${largestID}`);
 
-            let fColor = 'green';
-            let linkTitle = 'Magnet';
+
 
             try {
-                var magnet = req.data[largestID].magnet;
+                magnet = req.data[largestID].magnet;
                 magnets.push(magnet);
                 console.log(magnet.substring(0,20));
 
@@ -121,9 +159,13 @@ export default async function getTorrents(csvData, domain, port, site, limit, se
                 fColor= 'red';
                 linkTitle = 'Error';
             }
-            
+
+
+            if (sizes[largestID] === undefined) {sizes[largestID] = '';}
+            if (fallbackMessage === undefined) {fallbackMessage = '';}
+
             let ele = `<td><a class="mLink" style="color: ${fColor};" href="${magnet}">${linkTitle}</a></td>`;
-            let sizeRow = `<td>${sizes[largestID]}</td>`;
+            let sizeRow = `<td>${sizes[largestID]} ${fallbackMessage}</td>`;
 
             $('.tRow').eq(i).append(ele);
             $('.tRow').eq(i).append(sizeRow);
