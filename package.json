@@ -20,8 +20,11 @@
     "magnet-to-torrent": "^1.0.8",
     "magnet2torrent-js": "^1.4.0",
     "papaparse": "^5.3.2",
+<<<<<<< HEAD
     "path": "^0.12.7",
     "peerflix": "^0.39.0",
+=======
+>>>>>>> parent of c74239c (Added seeder check - Size check change - updated messaging)
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-mui-fileuploader": "^0.5.2",

@@ -13,9 +13,13 @@ let site = 'piratebay';
 // Set to true to search all sites. Overrides 'site'
 let searchAll = true;
 // Limits torrent listings
+<<<<<<< HEAD
 const limit = '3';
 // Sets a minimum for seeders
 const seedMin = '15';
+=======
+const limit = '10';
+>>>>>>> parent of c74239c (Added seeder check - Size check change - updated messaging)
 var magnetArray = [];
 
 
@@ -64,7 +68,7 @@ function App() {
         console.log(movieList);
 
         //Call the API
-        magnetArray = getTorrents(movieList, domain, port, site, limit, seedMin, searchAll);
+        magnetArray = getTorrents(movieList, domain, port, site, limit, searchAll);
 
         // Filtered Column Names
         setTableRows(rowsArray[0]);
