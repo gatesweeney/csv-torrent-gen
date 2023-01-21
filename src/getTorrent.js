@@ -92,13 +92,13 @@ export default async function getTorrents(csvData, domain, port, site, limit, se
                     if (seeders >= seedReq) {
                         options ++;
 
-                        if (sizeUnit == 'GiB') {
+                        if (sizeUnit == 'GiB' || 'GB') {
                             sizeOut = sizeNum * 1024;
                             converted = 'GB';
-                        } else if (sizeUnit == 'KiB') {
+                        } else if (sizeUnit == 'KiB' || 'KB') {
                             sizeOut = sizeNum / 1024;
                             converted = 'KB';
-                        } else if (sizeUnit == 'MiB') {
+                        } else if (sizeUnit == 'MiB' || 'MB') {
                             sizeOut = sizeNum;
                             converted = 'MB';
                         } else {
@@ -170,7 +170,7 @@ export default async function getTorrents(csvData, domain, port, site, limit, se
             $('.tRow').eq(i).append(ele);
             $('.tRow').eq(i).append(sizeRow);
 
-            $('.mLink')[i].click();
+           $('.mLink')[i].click();
 
 
 
