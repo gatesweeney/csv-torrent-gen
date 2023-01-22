@@ -4,33 +4,21 @@ import Papa from "papaparse";
 import getTorrents from "./getTorrent";
 import copyText from "./copyText";
 import $ from "jquery";
-//import torrentDL from "./webTorrent";
 
-
-//Python api
 
 let domain = 'localhost';
 let port = '8080';
 let site = 'piratebay';
 // Set to true to search all sites. Overrides 'site'
-let searchAll = true;
+let searchAll = false;
 // Limits torrent listings
-<<<<<<< HEAD
-const limit = '3';
+const limit = '10';
 // Sets a minimum for seeders
 const seedMin = '15';
-=======
-const limit = '10';
->>>>>>> parent of c74239c (Added seeder check - Size check change - updated messaging)
 var magnetArray = [];
 
 
-
-
-
 function App() {
-
-
   $('#complete').hide();
   // State to store parsed data
   const [parsedData, setParsedData] = useState([]);
@@ -70,7 +58,7 @@ function App() {
         console.log(movieList);
 
         //Call the API
-        magnetArray = getTorrents(movieList, domain, port, site, limit, searchAll);
+        magnetArray = getTorrents(movieList, domain, port, site, limit, seedMin, searchAll);
 
         // Filtered Column Names
         setTableRows(rowsArray[0]);
@@ -84,15 +72,6 @@ function App() {
   return (
     <div>
       <h1>csv-to-movie</h1>
-      <div>
-    {/*
-      <form action="">
-        <input type="text" id="minput" name="fname"></input>
-        <input onSubmit={torrentDL($('#minput').attr('value'))} type="submit" value="Submit"></input>
-      </form>    
-      <br></br>    
-    */}
-      </div>
       {/* File Uploader */}
       <input
         type="file"
@@ -144,6 +123,3 @@ function App() {
 }
 
 export default App;
-
-
-
