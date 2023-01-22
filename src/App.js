@@ -7,6 +7,8 @@ import $ from "jquery";
 //import torrentDL from "./webTorrent";
 
 
+//Python api
+
 let domain = 'localhost';
 let port = '8080';
 let site = 'piratebay';
