@@ -1,30 +1,19 @@
-import { Man } from "@mui/icons-material";
 import $ from "jquery";
-//import sizeProc from "./sizeProc";
+import pushTorrents from "./pushTorrents";
 
 
-let magnets = [];
+let titles = [];
 let errors = [];
-let apiURLS = [];
-
+let allListings = [];
+var roll = [];
 
 export default async function getTorrents(csvData, domain, port, site, limit, seedMin, searchAll) {
-    
-    //set default api type
-    var apiType;
-    
-    // ALL URL /api/v1/all/search?query=avengers&limit=10
-    // SITE URL /api/v1/search?site=1337x&query=avengers&limit=20
 
-    if (searchAll === true) {
-        apiType = '/api/v1/all/search?';
-        site = '';
-    } else {
-        apiType = '/api/v1/search?site=';
-    }
 
-    console.log(apiType);
+    var apiType = '/api?';
+    var category = 'Movies'; 
     
+    var masterList =[];
 
     // Sets total movies
     $('#total-movies').text(String(csvData.length));
@@ -49,33 +38,48 @@ export default async function getTorrents(csvData, domain, port, site, limit, se
         query = query.replace(/[^a-zA-Z0-9 ]/g, '');
         query = query.replaceAll(' ', '%20');
         // URL structure
-        var url = `http://${domain}:${port}${apiType}${site}&query=${query}&limit=${limit}`
-        // store urls for debug only
-        apiURLS.push(url);
+        var url = `http://${domain}:${port}${apiType}search=${query}&limit=${limit}&category=${category}`
+
         console.log(url);
 
         $.ajaxSetup({
             "error":function() { console.log('Error with the request has ocurred.')  }
         });
-    // API Call
-    await $.getJSON(url, async function (req) {
 
-            let fColor = 'green';
-            let linkTitle = 'Magnet';
-            var magnet = '#';
-            var fallbackMessage;
+    // API Call
+        await $.getJSON(url, async function (req) {
+
+                var title = '#';
+                var fallbackMessage;
+                
+                var sizes = [];
+                var options = 0;
+                var selection = [];
+
             
-            var big = 0;
-            var largestID = null;
-            var sizes = [];
-            var options = 0;
 
             async function picker(req, seedReq) {
                 var noSeed = 0;
-                for (let m = 0; m < req.data.length; m++) {
+                for (let m = 0; m < req.length; m++) {
                     // get size of item
-                    var size = String(req.data[m].size);
-                    var seeders = parseInt(req.data[m].seeders);
+                    var size = String(req[m].size);
+                    title = req[m].title;
+                    var resolution;
+                    var season;
+                    var episode;
+
+                    var seeders = parseInt(req[m].seeds);
+                    resolution = parseInt( title.match(/(2160p|1080p|720p|480p|240p)/) );
+                    season = title.match(/([Ss]?([0-9]{1,2}))[Eex]/);
+                    episode = title.match(/([Eex]([0-9]{2})(?:[^0-9]|$))/);
+
+                    try {
+                        season = season[0];
+                        episode = episode[0];
+                    } catch (error) {
+                        season = '';
+                        episode = '';
+                    }
     
                     // set unit to var
                     var sizeUnit = size.match(/[a-zA-Z]+/);
@@ -85,51 +89,59 @@ export default async function getTorrents(csvData, domain, port, site, limit, se
                     
     
                     var converted;
-                    var sizeOut;
-                    
+                    var sizeOut;                    
     
                     // Check for unit and convert to MB
                     if (seeders >= seedReq) {
                         options ++;
 
-                        if (sizeUnit == 'GiB') {
+                        if (sizeUnit == 'GB') {
                             sizeOut = sizeNum * 1024;
                             converted = 'GB';
-                        } else if (sizeUnit == 'KiB') {
+                        } else if (sizeUnit == 'KB') {
                             sizeOut = sizeNum / 1024;
                             converted = 'KB';
-                        } else if (sizeUnit == 'MiB') {
+                        } else if (sizeUnit == 'MB') {
                             sizeOut = sizeNum;
                             converted = 'MB';
                         } else {
                             sizeOut = 'DNP';
                         }
-                        if (sizeOut >= big) {
-                            big = sizeOut;
-                            largestID = m;
-                        }
+                        
+
                     } else {
                         sizeOut = 'Too Few Seeders';
                         noSeed ++;
                     }
-    
-                    sizes.push(`Size: ${sizeNum} ${sizeUnit} - ${sizeOut} MBs Seeders: ${seeders}`)
+                      
+                    if (sizeOut < 20000) { 
+                        req[m].resolution = resolution;
+                        selection.push(req[m]); 
+                        sizes.push(`Resolution: ${resolution}p Size: ${sizeNum} ${sizeUnit} - ${sizeOut} MBs Seeders: ${seeders}`);
+                }
                     
                     
                 }
-                if (noSeed == req.data.length) { var tooFew = true; }
-                if (tooFew === true) {
-                    fColor= 'red';
-                    linkTitle = 'Low Seeders - OK';
+
+                if (selection.length > 0) {
+                    selection.sort(function(b, a) {
+                        var keyA = parseFloat(a.resolution),
+                            keyB = parseFloat(b.resolution);
+                        // Compare the 2 res
+                        if (keyA < keyB) return -1;
+                        if (keyA > keyB) return 1;
+                        return 0;
+                    });
+                    console.log(selection);
+
+                } else {
                     try {
-                        await picker(req, 5);
+                        await picker(req, seedMin-5);
                     } catch (error) {
-                        fColor= 'red';
-                        linkTitle = 'Error - Not Found';
-                        magnet = '#';
                         fallbackMessage = "Couldn't find a suitable listing for this query...";
                     }
                 }
+
                 return options;
 
             }
@@ -140,59 +152,104 @@ export default async function getTorrents(csvData, domain, port, site, limit, se
             await picker(req, seedMin);
             
 
-            console.log(sizes);
-            console.log(`********** Largest ID: ${largestID}`);
-
+            let desc = `Resolution: ${selection[0].resolution}p Size: ${selection[0].size} MBs Seeders: ${selection[0].seeds}`;
 
 
             try {
-                magnet = req.data[largestID].magnet;
-                magnets.push(magnet);
-                console.log(magnet.substring(0,20));
-
-
+                allListings.push(selection);
+                title = selection[0].title;
+                titles.push(title);
+                roll.push({"index": 0})
               }
               catch(err) {
                 console.log(`******** Couldn't find movie: ${csvData[i]}`)
                 errors.push(csvData[i]);
-                magnet = '#';
-                fColor= 'red';
-                linkTitle = 'Error';
+                title = '#';
+                selection[0] = 'null';
+                desc = "Couldn't find a listing for this query";
             }
 
+            masterList.push(selection[0]);
 
-            if (sizes[largestID] === undefined) {sizes[largestID] = '';}
+
+            // Reporting for errors.
             if (fallbackMessage === undefined) {fallbackMessage = '';}
 
-            let ele = `<td><a class="mLink" style="color: ${fColor};" href="${magnet}">${linkTitle}</a></td>`;
-            let sizeRow = `<td>${sizes[largestID]} ${fallbackMessage}</td>`;
 
+
+            let ele = `<td class="info-row">${masterList.length - 1} <span>${desc} ${fallbackMessage}</span></td><td class="next-btn"><button>NEXT</button></td><td class="fraction"></td>`;
+
+
+            //Add row to column
             $('.tRow').eq(i).append(ele);
-            $('.tRow').eq(i).append(sizeRow);
 
-            $('.mLink')[i].click();
-
-
-
+            return allListings;
         }
     )
     } 
-    // returns array of magnet links
-    //console.log(apiURLS);
-    console.log('Magnets:')
-    console.log(magnets);
-    console.log('Errors:')
-    console.log(errors);
 
-    var magString = magnets.join('\n');
-    console.log(`************Mag String***************\n${magString}`)
-    navigator.clipboard.writeText(magString);
+    var magString = JSON.stringify(masterList);
     $('#results').hide();
     $('#complete').show();
-    $('#complete').text(`Query Completed. ${magnets.length} magnets copied to your clipboard. ${errors.length} movie(s) could not be found.`)
+    $('#complete').text(`Query Completed. ${titles.length} titles ready to download.`)
+
+    console.log('MASTER LIST:\n', masterList);
+
+    console.log('ROLL ARRAY\n', roll);
 
 
+    // OnClick for each next button
+    $(document).on("click", ".next-btn", function (ev) {
+        // Get correct row
+        var num = $(this).siblings('.info-row').html();
+        
+        
 
-    return magString;
+        // Get number from text at beginning of row, and report it to console. Current index number for listing
+        num = parseInt(num.split(' ')[0]);
+        // Go ahead and advance to next listing.
+        
+
+        // Fetch results for current listing, and add to the index in the roll sheet or reset if at the end.
+        var array = allListings[num];
+        roll[num].index ++;
+
+        if (roll[num].index === array.length) {
+            roll[num].index = 0;
+        }
+
+        // Set index of current result being displayed for the current listing and show it in the UI.
+        var fraction = `<td>( ${roll[num].index + 1} / ${array.length} )</td>`;
+        $('.fraction').eq(num).html(fraction);
+
+
+        console.log('LISTING', num, 'RESULT', roll[num].index + 1);
+
+
+        var out = array[roll[num].index];
+
+        // Report current array result
+        console.log('CHANGED TO:\n', out);
+
+        //Modify the html for ease of use.
+        var descriptor = `Resolution: ${out.resolution}p Size: ${out.size} MBs Seeders: ${out.seeds}`;
+        $(this).siblings('.info-row').find('span').html(descriptor);
+
+        // Modify the masterList
+        masterList[num] = out;
+        console.log('MASTER LIST MODIFIED\n', masterList);
+
+    });
+
+    $('#submit').css("display", "block");
+
+    $('#submit').on('click', function(ev) {
+        pushTorrents(masterList);
+    });
+
+
+    return allListings;
 
 }
+
+

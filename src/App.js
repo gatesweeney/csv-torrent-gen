@@ -2,24 +2,24 @@ import "./App.css";
 import { useState } from "react";
 import Papa from "papaparse";
 import getTorrents from "./getTorrent";
-import copyText from "./copyText";
 import $ from "jquery";
 
 
 let domain = 'localhost';
-let port = '8080';
+let port = '3004';
 let site = 'piratebay';
 // Set to true to search all sites. Overrides 'site'
 let searchAll = false;
 // Limits torrent listings
-const limit = '10';
+const limit = '30';
 // Sets a minimum for seeders
 const seedMin = '15';
-var magnetArray = [];
+var allListings = [];
 
 
 function App() {
   $('#complete').hide();
+  $('#submit').hide();
   // State to store parsed data
   const [parsedData, setParsedData] = useState([]);
 
@@ -58,8 +58,9 @@ function App() {
         console.log(movieList);
 
         //Call the API
-        magnetArray = getTorrents(movieList, domain, port, site, limit, seedMin, searchAll);
-
+        for (let i = 0; i === 0; i++) {
+          allListings = getTorrents(movieList, domain, port, site, limit, seedMin, searchAll);
+        }
         // Filtered Column Names
         setTableRows(rowsArray[0]);
 
@@ -68,6 +69,9 @@ function App() {
       },
     });
   };
+
+  $('.masterList').html(allListings);
+
 
   return (
     <div>
@@ -118,8 +122,13 @@ function App() {
           })}
         </tbody>
       </table>
+      <br>
+      </br>
+      <button id="submit">Send to Seedbox</button>
     </div>
   );
 }
 
 export default App;
+
+
