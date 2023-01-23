@@ -3,6 +3,7 @@ import { useState } from "react";
 import Papa from "papaparse";
 import getTorrents from "./getTorrent";
 import $ from "jquery";
+import { getAllUrlParams } from "./getParams";
 
 
 let domain = 'localhost';
@@ -18,6 +19,8 @@ var allListings = [];
 
 
 function App() {
+
+
   $('#complete').hide();
   $('#submit').hide();
   // State to store parsed data
@@ -72,62 +75,63 @@ function App() {
 
   $('.masterList').html(allListings);
 
-
-  return (
-    <div>
-      <h1>csv-to-movie</h1>
-      {/* File Uploader */}
-      <input
-        type="file"
-        name="file"
-        onChange={changeHandler}
-        accept=".csv"
-      />
-      <br />
-      <br />
-      <div id="results">
-        <div id="current-movie">Searching movie: <span>movie</span></div>
+  var out = (
+      <div>
+        <h1>csv-to-movie</h1>
+        <input
+          type="file"
+          name="file"
+          onChange={changeHandler}
+          accept=".csv"
+        />
         <br />
-        <div id="loading">Processed <span id="movie-now">0</span> / <span id="total-movies">0</span> movies.</div>
         <br />
-        <div id="myProgress">
-          <div id="myBar"></div>
+        <div id="results">
+          <div id="current-movie">Searching movie: <span>movie</span></div>
+          <br />
+          <div id="loading">Processed <span id="movie-now">0</span> / <span id="total-movies">0</span> movies.</div>
+          <br />
+          <div id="myProgress">
+            <div id="myBar"></div>
+          </div>
+          <div id="percent"><span>0</span>%</div>
         </div>
-        <div id="percent"><span>0</span>%</div>
-      </div>
-      <br />
-      <div id="complete"></div>
-      <br />
-      <br />
-      <br />
-      <br />
-      {/* Table */}
-      <table>
-        <thead>
-          <tr>
-            {tableRows.map((rows, index) => {
-              return <th key={index}>{rows}</th>;
+        <br />
+        <div id="complete"></div>
+        <br />
+        <br />
+        <br />
+        <br />
+        <table>
+          <thead>
+            <tr>
+              {tableRows.map((rows, index) => {
+                return <th key={index}>{rows}</th>;
+              })}
+            </tr>
+          </thead>
+          <tbody>
+            {values.map((value, index) => {
+              return (
+                <tr class="tRow" key={index}>
+                  {value.map((val, i) => {
+                    return <td key={i}>{val}</td>;
+                  })}
+                </tr>
+              );
             })}
-          </tr>
-        </thead>
-        <tbody>
-          {values.map((value, index) => {
-            return (
-              <tr class="tRow" key={index}>
-                {value.map((val, i) => {
-                  return <td key={i}>{val}</td>;
-                })}
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-      <br>
-      </br>
-      <button id="submit">Send to Seedbox</button>
-    </div>
-  );
-}
+          </tbody>
+        </table>
+        <br>
+        </br>
+        <button id="submit">Send to Seedbox</button>
+      </div>
+    );
+    return out;
+  }
+
+  
+
 
 export default App;
 

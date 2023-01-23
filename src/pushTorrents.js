@@ -3,7 +3,7 @@
 export default async function pushTorrents(list) {
     console.log(list);
 
-    await fetch('http://127.0.0.1:3004/magnet/', {
+    await fetch('http://127.0.0.1:3004/seedbox/', {
     method: 'POST',
     headers: {
         'Accept': 'application/json',
