@@ -6,7 +6,8 @@ import $ from "jquery";
 import { getAllUrlParams } from "./getParams";
 
 
-let domain = 'localhost';
+var domain;
+domain = window.location.href.split('/')[2].split(':')[0];
 let port = '3004';
 let site = 'piratebay';
 // Set to true to search all sites. Overrides 'site'
@@ -19,6 +20,8 @@ var allListings = [];
 
 
 function App() {
+
+
 
 
   $('#complete').hide();
@@ -78,6 +81,7 @@ function App() {
   var out = (
       <div>
         <h1>csv-to-movie</h1>
+        <p>Using API at {domain}:{port}</p>
         <input
           type="file"
           name="file"
