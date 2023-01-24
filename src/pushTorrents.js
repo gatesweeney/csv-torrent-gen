@@ -8,7 +8,6 @@ export default async function pushTorrents(list, domain, port) {
     headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
-        "jsonbody": JSON.stringify(list)
 
     },
     body: JSON.stringify(list)
