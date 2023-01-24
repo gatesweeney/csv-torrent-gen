@@ -1,9 +1,9 @@
 
 
-export default async function pushTorrents(list) {
+export default async function pushTorrents(list, domain, port) {
     console.log(list);
 
-    await fetch('http://127.0.0.1:3004/seedbox/', {
+    await fetch(`http://${domain}:${port}/seedbox/`, {
     method: 'POST',
     headers: {
         'Accept': 'application/json',

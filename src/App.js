@@ -6,6 +6,7 @@ import $ from "jquery";
 import { getAllUrlParams } from "./getParams";
 
 
+
 var domain;
 domain = window.location.href.split('/')[2].split(':')[0];
 let port = '3004';
@@ -21,8 +22,9 @@ var allListings = [];
 
 function App() {
 
-
-
+  var apiKey = '';
+  apiKey = getAllUrlParams().key;
+  console.log('Using api key: ', apiKey);
 
   $('#complete').hide();
   $('#submit').hide();
@@ -65,7 +67,7 @@ function App() {
 
         //Call the API
         for (let i = 0; i === 0; i++) {
-          allListings = getTorrents(movieList, domain, port, site, limit, seedMin, searchAll);
+          allListings = getTorrents(movieList, domain, port, site, limit, seedMin, apiKey);
         }
         // Filtered Column Names
         setTableRows(rowsArray[0]);
@@ -81,7 +83,7 @@ function App() {
   var out = (
       <div>
         <h1>csv-to-movie</h1>
-        <p>Using API at {domain}:{port}</p>
+        <p>Using API at {domain}:{port} with API key: {apiKey}</p>
         <input
           type="file"
           name="file"
