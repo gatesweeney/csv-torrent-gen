@@ -1,4 +1,5 @@
 # CSV to Magnet Links
+ - This project has been included in (Wingate-Node)[https://github.com/gatesweeney/wingate-node]
 
  - Works best with [Transmission](https://transmissionbt.com/download) torrent client.
 
