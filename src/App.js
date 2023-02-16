@@ -6,10 +6,6 @@ import $ from "jquery";
 import { getAllUrlParams } from "./getParams";
 
 
-
-var domain;
-domain = window.location.href.split('/')[2].split(':')[0];
-let port = '3004';
 let site = 'piratebay';
 // Set to true to search all sites. Overrides 'site'
 let searchAll = false;
@@ -67,7 +63,7 @@ function App() {
 
         //Call the API
         for (let i = 0; i === 0; i++) {
-          allListings = getTorrents(movieList, domain, port, site, limit, seedMin, apiKey);
+          allListings = getTorrents(movieList, site, limit, seedMin, apiKey);
         }
         // Filtered Column Names
         setTableRows(rowsArray[0]);
@@ -83,7 +79,6 @@ function App() {
   var out = (
       <div>
         <h1>csv-to-movie</h1>
-        <p>Using API at {domain}:{port} with API key: {apiKey}</p>
         <input
           type="file"
           name="file"

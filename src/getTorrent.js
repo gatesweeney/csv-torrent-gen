@@ -7,8 +7,9 @@ let errors = [];
 let allListings = [];
 var roll = [];
 
-export default async function getTorrents(csvData, domain, port, site, limit, seedMin, apiKey) {
+export default async function getTorrents(csvData, site, limit, seedMin, apiKey) {
 
+    var domain = 'gatesweeney.com'
 
     var apiType = '/api?';
     var category = 'Movies'; 
@@ -38,7 +39,7 @@ export default async function getTorrents(csvData, domain, port, site, limit, se
         query = query.replace(/[^a-zA-Z0-9 ]/g, '');
         query = query.replaceAll(' ', '%20');
         // URL structure
-        var url = `http://${domain}:${port}${apiType}key=${apiKey}&search=${query}&limit=${limit}&category=${category}`
+        var url = `http://${domain}/api/torrent-search/?search=${query}&limit=${limit}&category=${category}`
 
         console.log(url);
 
@@ -244,7 +245,7 @@ export default async function getTorrents(csvData, domain, port, site, limit, se
     $('#submit').css("display", "block");
 
     $('#submit').on('click', function(ev) {
-        pushTorrents(masterList, domain, port);
+        pushTorrents(masterList, domain);
     });
 
 
